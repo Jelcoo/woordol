@@ -1,8 +1,8 @@
 import { StyleSheet } from 'react-native';
 
-const letterGrid = StyleSheet.create({
+const keyboardGrid = StyleSheet.create({
     fieldsGrid: {
-        marginTop: 80,
+        marginTop: 20,
         alignItems: 'center',
     },
     field: {
@@ -13,10 +13,17 @@ const letterGrid = StyleSheet.create({
     },
     fieldText: {
         color: 'white',
-        height: 60,
-        width: 60,
+        height: 35,
+        width: 25,
         textAlign: 'center',
-        fontSize: 25,
+        fontSize: 23,
+    },
+    enterButton: {
+        color: 'white',
+        height: 35,
+        width: 70,
+        textAlign: 'center',
+        fontSize: 23,
     },
     state0: {
         // Word doesn't contains letter
@@ -32,4 +39,4 @@ const letterGrid = StyleSheet.create({
     }
 });
 
-export default letterGrid;
+export default keyboardGrid;
