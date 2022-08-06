@@ -1,26 +1,23 @@
 import { useState, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { View } from 'react-native';
-
-import tileStyle, { TileContainer, TileText, Tile, TileRow } from './styles/tiles';
-import { KeyboardContainer, KeyboardKey, KeyboardKeyText, KeyboardRow } from './styles/keyboard';
-import { Container } from './styles/home';
-
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faBackspace, faTurnDown } from '@fortawesome/free-solid-svg-icons';
 import * as config from './config.js';
 
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faBackspace, faTurnDown } from '@fortawesome/free-solid-svg-icons'
+import { TileContainer, TileText, Tile, TileRow } from './styles/tiles';
+import { KeyboardContainer, KeyboardKey, KeyboardKeyText, KeyboardRow } from './styles/keyboard';
+import { Container } from './styles/home';
 
 export default function App() {
     const wordOfTheDay = "money";
     const [ guesses, setGuesses ] = useState({ ...config.newGame });
     const [ markers, setMarkers ] = useState({
-        0: Array.from({ length: config.wordLength }).fill(""),
-        1: Array.from({ length: config.wordLength }).fill(""),
-        2: Array.from({ length: config.wordLength }).fill(""),
-        3: Array.from({ length: config.wordLength }).fill(""),
-        4: Array.from({ length: config.wordLength }).fill(""),
-        5: Array.from({ length: config.wordLength }).fill(""),
+        0: Array.from({ length: config.wordLength }).fill(''),
+        1: Array.from({ length: config.wordLength }).fill(''),
+        2: Array.from({ length: config.wordLength }).fill(''),
+        3: Array.from({ length: config.wordLength }).fill(''),
+        4: Array.from({ length: config.wordLength }).fill(''),
+        5: Array.from({ length: config.wordLength }).fill(''),
     });
     let letterIndex = useRef(0);
     let round = useRef(0);
@@ -44,7 +41,7 @@ export default function App() {
         const _letterIndex = letterIndex.current;
         const _round = round.current;
     
-        if (_letterIndex < wordLength) {
+        if (_letterIndex < config.wordLength) {
             setGuesses((prev) => {
                 const newGuesses = { ...prev };
                 newGuesses[_round][_letterIndex] = pressedKey.toLowerCase();
@@ -71,7 +68,6 @@ export default function App() {
 
     const handleClick = (key) => {
         const pressedKey = key.toLowerCase();
-    
         enterGuess(pressedKey);
     };
 

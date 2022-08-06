@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 
 export const KeyboardContainer = styled.View`
-    margin-top: 20%;
+    margin-top: 30%;
     margin-right: 1%;
     margin-left: 1%;
     align-items: center;
