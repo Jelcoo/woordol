@@ -90,30 +90,6 @@ export default function App() {
                     </TileRow>
                 ))}
             </TileContainer>
-            <View style={tileStyle.tileGrid}>
-                {/*<FlatList
-                    itemDimension={130}
-                    data={guesses}
-                    spacing={10}
-                    numColumns={5}
-                    key={5}
-                    renderItem={({ item }) => (
-                        <View style={tileStyle.tile}>
-                            <Text
-                                style={[
-                                    item.state === 2 ?
-                                        tileStyle.state2
-                                        :
-                                        tileStyle.state0
-                                    , tileStyle.tileText
-                                ]}
-                            >
-                                {item.value}
-                            </Text>
-                        </View>
-                    )}
-                />*/}
-            </View>
             <KeyboardContainer>
                 {config.keyboardRows.map((keys, i) => (
                     <KeyboardRow key={i}>
