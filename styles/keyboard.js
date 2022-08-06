@@ -1,46 +1,33 @@
-import { StyleSheet } from 'react-native';
+import styled from 'styled-components/native';
 
-const keyboardGrid = StyleSheet.create({
-    grid: {
-        marginHorizontal: 8,
-        alignItems: 'center',
-        marginTop: 10,
-    },
-    row: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '90%',
-        marginBottom: 10,
-    },
-    button: {
-        padding: 0,
-        marginRight: 6,
-        height: 58,
-        borderRadius: 4,
-        backgroundColor: '#505050',
-        flex: 1,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    buttonText: {
-        color: '#ffffff',
-        fontWeight: 'bold',
-        textTransform: 'uppercase',
-    },
-    state0: {
-        // Word doesn't contains letter
-        backgroundColor: '#505050',
-    },
-    state1: {
-        // Word contains letter
-        backgroundColor: '#ffc107',
-    },
-    state2: {
-        // Letter on right spot
-        backgroundColor: '#4caf50',
-    }
-});
+export const KeyboardContainer = styled.View`
+    margin-right: 1%;
+    margin-left: 1%;
+    align-items: center;
+`;
 
-export default keyboardGrid;
+export const KeyboardRow = styled.View`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 95%;
+    margin-bottom: 10px;
+`;
+
+export const KeyboardKey = styled.TouchableOpacity`
+    padding: 0;
+    margin-right: 6px;
+    height: 58px;
+    border-radius: 4px;
+    background-color: #505050;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+`;
+
+export const KeyboardKeyText = styled.Text`
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+`;

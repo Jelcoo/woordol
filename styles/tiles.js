@@ -1,4 +1,34 @@
 import { StyleSheet } from 'react-native';
+import styled from 'styled-components/native';
+
+export const TileContainer = styled.View`
+    margin-top: 15%;
+    align-items: center;
+`;
+
+export const TileRow = styled.View`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 95%;
+    margin-bottom: 5px;
+`;
+
+export const Tile = styled.View`
+    padding: 2px;
+    padding-bottom: 4px;
+    border-width: 1.5px;
+    border-color: #565758;
+    margin-right: 5px;
+`;
+
+export const TileText = styled.Text`
+    color: white;
+    height: 60px;
+    width: 60px;
+    text-align: center;
+    font-size: 25px;
+`;
 
 const tiles = StyleSheet.create({
     tileGrid: {

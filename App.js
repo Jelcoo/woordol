@@ -1,29 +1,99 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Text, View, FlatList, TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
 
-import homeStyles from './styles/home';
-import tileStyle from './styles/tiles';
-import keyboardStyle from './styles/keyboard';
+import tileStyle, { TileContainer, TileText, Tile, TileRow } from './styles/tiles';
+import { KeyboardContainer, KeyboardKey, KeyboardKeyText, KeyboardRow } from './styles/keyboard';
+import { Container } from './styles/home';
 
-import keys from './data/keyboard';
-import tileList from './data/tiles';
+import * as config from './config.js';
+
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faBackspace, faTurnDown } from '@fortawesome/free-solid-svg-icons'
 
 export default function App() {
-    const [ tiles, setTiles ] = useState(tileList);
+    const wordOfTheDay = "money";
+    const [ guesses, setGuesses ] = useState({ ...config.newGame });
+    const [ markers, setMarkers ] = useState({
+        0: Array.from({ length: config.wordLength }).fill(""),
+        1: Array.from({ length: config.wordLength }).fill(""),
+        2: Array.from({ length: config.wordLength }).fill(""),
+        3: Array.from({ length: config.wordLength }).fill(""),
+        4: Array.from({ length: config.wordLength }).fill(""),
+        5: Array.from({ length: config.wordLength }).fill(""),
+    });
+    let letterIndex = useRef(0);
+    let round = useRef(0);
 
-    const setTile = (key) => {
-        let tileList = tiles;
-        tileList[0] = {value: key};
-        setTiles(tileList);
-    }
+    const erase = () => {
+        const _letterIndex = letterIndex.current;
+        const _round = round.current;
+    
+        if (_letterIndex !== 0) {
+            setGuesses((prev) => {
+                const newGuesses = { ...prev };
+                newGuesses[_round][_letterIndex - 1] = "";
+                return newGuesses;
+            });
+    
+            letterIndex.current = _letterIndex - 1;
+        }
+    };
+
+    const publish = (pressedKey) => {
+        const _letterIndex = letterIndex.current;
+        const _round = round.current;
+    
+        if (_letterIndex < wordLength) {
+            setGuesses((prev) => {
+                const newGuesses = { ...prev };
+                newGuesses[_round][_letterIndex] = pressedKey.toLowerCase();
+                return newGuesses;
+            });
+    
+            letterIndex.current = _letterIndex + 1;
+        }
+    };
+
+    const enterGuess = async (pressedKey) => {
+        if (pressedKey === "enter" && !guesses[round.current].includes("")) {
+            //const validWord = await fetchWord(guesses[round.current].join(""));
+    
+            //if (Array.isArray(validWord)) {
+            //    submit();
+            //}
+        } else if (pressedKey === "backspace") {
+            erase();
+        } else if (pressedKey !== "enter") {
+            publish(pressedKey);
+        }
+    };
+
+    const handleClick = (key) => {
+        const pressedKey = key.toLowerCase();
+    
+        enterGuess(pressedKey);
+    };
 
     return (
-        <View style={homeStyles.container}>
+        <Container>
+            <TileContainer>
+                {Object.values(guesses).map((word, wordIndex) => (
+                    <TileRow>
+                        {word.map((letter, i) => (
+                            <Tile key={i}>
+                                <TileText>
+                                    {letter}
+                                </TileText>
+                            </Tile>
+                        ))}
+                    </TileRow>
+                ))}
+            </TileContainer>
             <View style={tileStyle.tileGrid}>
-                <FlatList
+                {/*<FlatList
                     itemDimension={130}
-                    data={tiles}
+                    data={guesses}
                     spacing={10}
                     numColumns={5}
                     key={5}
@@ -42,26 +112,39 @@ export default function App() {
                             </Text>
                         </View>
                     )}
-                />
+                />*/}
             </View>
-            <View style={keyboardStyle.grid}>
-                {keys.map((keyMap, key) => (
-                    <View key={key} style={keyboardStyle.row}>
-                        {keyMap.map((k) => (
-                            <TouchableOpacity
-                                key={k}
-                                style={keyboardStyle.button}
-                                onPress={setTile(k)}
-                            >
-                                <Text style={keyboardStyle.buttonText}>
-                                    {k}
-                                </Text>
-                            </TouchableOpacity>
+            <KeyboardContainer>
+                {config.keyboardRows.map((keys, i) => (
+                    <KeyboardRow key={i}>
+                        {keys.map((key, i) => (
+                            <KeyboardKey key={i} onPress={() => handleClick(key)}>
+                                <KeyboardKeyText>
+                                    {key === 'backspace' ? (
+                                        <FontAwesomeIcon
+                                            icon={faBackspace}
+                                            style={{ color: '#ffffff' }}
+                                        />
+                                    ) : (
+                                        key === 'enter' ? (
+                                            <FontAwesomeIcon
+                                                icon={faTurnDown}
+                                                style={{
+                                                    color: '#ffffff',
+                                                    transform: [{ rotate: '90deg' }]
+                                                }}
+                                            />
+                                        ) : (
+                                            key
+                                        )
+                                    )}
+                                </KeyboardKeyText>
+                            </KeyboardKey>
                         ))}
-                    </View>
+                    </KeyboardRow>
                 ))}
-            </View>
+            </KeyboardContainer>
             <StatusBar style="auto" />
-        </View>
+        </Container>
     );
 }

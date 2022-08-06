@@ -1,10 +1,6 @@
-import { StyleSheet } from 'react-native';
+import styled from 'styled-components/native';
 
-const homeStyles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#2d2e2c',
-    }
-});
-
-export default homeStyles;
+export const Container = styled.View`
+    flex: 1;
+    background-color: #2d2e2c;
+`;
