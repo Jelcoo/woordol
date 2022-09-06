@@ -74,10 +74,10 @@ export default function App() {
     return (
         <Container>
             <TileContainer>
-                {Object.values(guesses).map((word, wordIndex) => (
-                    <TileRow>
+                {Object.values(guesses).map((word, i) => (
+                    <TileRow key={i}>
                         {word.map((letter, i) => (
-                            <Tile key={i}>
+                            <Tile key={i+letter}>
                                 <TileText>
                                     {letter}
                                 </TileText>
@@ -90,7 +90,7 @@ export default function App() {
                 {config.keyboardRows.map((keys, i) => (
                     <KeyboardRow key={i}>
                         {keys.map((key, i) => (
-                            <KeyboardKey key={i} onPress={() => handleClick(key)}>
+                            <KeyboardKey key={i+key} onPress={() => handleClick(key)}>
                                 <KeyboardKeyText>
                                     {key === 'backspace' ? (
                                         <FontAwesomeIcon
