@@ -59,7 +59,7 @@ export default function App() {
             //if (Array.isArray(validWord)) {
             //    submit();
             //}
-        } else if (pressedKey === "backspace") {
+        } else if (pressedKey === "backspace") {       
             erase();
         } else if (pressedKey !== "enter") {
             publish(pressedKey);
