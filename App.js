@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBackspace, faTurnDown } from '@fortawesome/free-solid-svg-icons';
 import * as config from './config';
-import words from './data/words';
+import { wordList } from './data/words';
 import * as dataManager from './data/manager';
 import * as utils from './utils';
 
@@ -26,7 +26,7 @@ export default function App() {
     let round = useRef(0);
 
     useEffect(() => {
-        dataManager.store('woordol_words', JSON.stringify(words));
+        dataManager.store('woordol_words', JSON.stringify(wordList));
     });
 
     const submit = () => {
@@ -137,7 +137,7 @@ export default function App() {
                 {Object.values(guesses).map((word, i) => (
                     <TileRow key={i}>
                         {word.map((letter, ind) => (
-                            <Tile key={ind+letter} style={{ backgroundColor: utils.markerToColor(markers[i][ind]) }}>
+                            <Tile key={ind+letter} style={utils.markerToColor(markers[i][ind])}>
                                 <TileText>
                                     {letter}
                                 </TileText>
