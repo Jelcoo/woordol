@@ -31,55 +31,41 @@ export default function App() {
 
     const submit = () => {
         const roundNr = round.current;
+        const newMarkers = { ...markers };
+        const correctWord = wordOfTheDay.split('');
+        const notMarked = [];
     
-        const updatedMarkers = {
-          ...markers,
-        };
+        // Check correct letters
+        correctWord.forEach((letter, i) => {
+            const guessedLetter = guesses[roundNr][i];
     
-        const tempWord = wordOfTheDay.split("");
-    
-        const leftoverIndices = [];
-    
-        // Prioritize the letters in the correct spot
-        tempWord.forEach((letter, index) => {
-          const guessedLetter = guesses[roundNr][index];
-    
-          if (guessedLetter === letter) {
-            updatedMarkers[roundNr][index] = "green";
-            tempWord[index] = "";
-          } else {
-            // We will use this to mark other letters for hints
-            leftoverIndices.push(index);
-          }
+            if (guessedLetter === letter) {
+                newMarkers[roundNr][i] = 'green';
+                correctWord[i] = '';
+            } else notMarked.push(i);
         });
     
-        if (updatedMarkers[roundNr].every((guess) => guess === "green")) {
-          setMarkers(updatedMarkers);
-          win();
-          return;
+        // Check if all markers are green (= win)
+        if (newMarkers[roundNr].every((guess) => guess === 'green')) {
+            // TODO: make win system
+            setMarkers(newMarkers);
+            return;
         }
     
-        // Then find the letters in wrong spots
-        if (leftoverIndices.length) {
-          leftoverIndices.forEach((index) => {
-            const guessedLetter = guesses[roundNr][index];
-            const correctPositionOfLetter = tempWord.indexOf(guessedLetter);
+        // Check letters in wrong spot
+        if (notMarked.length) {
+            notMarked.forEach((i) => {
+                const guessedLetter = guesses[roundNr][i];
+                const position = correctWord.indexOf(guessedLetter);
     
-            if (
-              tempWord.includes(guessedLetter) &&
-              correctPositionOfLetter !== index
-            ) {
-              // Mark yellow when letter is in the word of the day but in the wrong spot
-              updatedMarkers[roundNr][index] = "yellow";
-              tempWord[correctPositionOfLetter] = "";
-            } else {
-              // This means the letter is not in the word of the day.
-              updatedMarkers[roundNr][index] = "grey";
-            }
+            if (correctWord.includes(guessedLetter) && position !== i) {
+                newMarkers[roundNr][i] = 'yellow';
+                correctWord[position] = '';
+            } else newMarkers[roundNr][i] = "grey";
           });
         }
     
-        setMarkers(updatedMarkers);
+        setMarkers(newMarkers);
         round.current = roundNr + 1;
         letterIndex.current = 0;
     };
