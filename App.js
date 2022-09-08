@@ -12,7 +12,6 @@ import { KeyboardContainer, KeyboardKey, KeyboardKeyText, KeyboardRow } from './
 import { Container } from './styles/home';
 
 export default function App() {
-    const wordOfTheDay = "nimby";
     const [ guesses, setGuesses ] = useState({ ...config.newGame });
     const [ markers, setMarkers ] = useState({
         0: Array.from({ length: config.wordLength }).fill(''),
@@ -24,47 +23,56 @@ export default function App() {
     });
     let letterIndex = useRef(0);
     let round = useRef(0);
+    const [ todaysWord, setTodaysWord ] = useState('');
 
     useEffect(() => {
         dataManager.store('woordol_words', JSON.stringify(wordList));
+        checkTodaysWord();
     });
+
+    const checkTodaysWord = async () => {
+        const savedWordList = JSON.parse(await dataManager.get('woordol_words'));
+        const today = new Date().toISOString().slice(0, 10);
+        const word = savedWordList.filter(w => w.use_on === today);
+        if (word) setTodaysWord(word[0].word);
+    }
 
     const submit = () => {
         const roundNr = round.current;
         const newMarkers = { ...markers };
-        const correctWord = wordOfTheDay.split('');
+        const correctWord = todaysWord.split('');
         const notMarked = [];
-    
+
         // Check correct letters
         correctWord.forEach((letter, i) => {
             const guessedLetter = guesses[roundNr][i];
-    
+
             if (guessedLetter === letter) {
                 newMarkers[roundNr][i] = 'green';
                 correctWord[i] = '';
             } else notMarked.push(i);
         });
-    
+
         // Check if all markers are green (= win)
         if (newMarkers[roundNr].every((guess) => guess === 'green')) {
             // TODO: make win system
             setMarkers(newMarkers);
             return;
         }
-    
+
         // Check letters in wrong spot
         if (notMarked.length) {
             notMarked.forEach((i) => {
                 const guessedLetter = guesses[roundNr][i];
                 const position = correctWord.indexOf(guessedLetter);
-    
+
             if (correctWord.includes(guessedLetter) && position !== i) {
                 newMarkers[roundNr][i] = 'yellow';
                 correctWord[position] = '';
             } else newMarkers[roundNr][i] = "grey";
           });
         }
-    
+
         setMarkers(newMarkers);
         round.current = roundNr + 1;
         letterIndex.current = 0;
@@ -73,14 +81,14 @@ export default function App() {
     const backspace = () => {
         const index = letterIndex.current;
         const roundNr = round.current;
-    
+
         if (index !== 0) {
             setGuesses((prev) => {
                 const newGuesses = { ...prev };
                 newGuesses[roundNr][index - 1] = '';
                 return newGuesses;
             });
-    
+
             letterIndex.current = index - 1;
         }
     };
@@ -88,14 +96,14 @@ export default function App() {
     const enter = (key) => {
         const index = letterIndex.current;
         const roundNr = round.current;
-    
+
         if (index < config.wordLength) {
             setGuesses((prev) => {
                 const newGuesses = { ...prev };
                 newGuesses[roundNr][index] = key.toLowerCase();
                 return newGuesses;
             });
-    
+
             letterIndex.current = index + 1;
         }
     };
@@ -106,7 +114,7 @@ export default function App() {
             // Fetch words & validate
             const savedWordList = JSON.parse(await dataManager.get('woordol_words'));
             const isValid = savedWordList.filter(w => w.word === guesses[round.current].join(''));
-    
+
             if (isValid) submit();
         } else if (pressed === "backspace") {
             // Remove last letter from the field
