@@ -108,7 +108,7 @@ export default function App() {
             const savedWordList = JSON.parse(await dataManager.get('woordol_words'));
             const isValid = savedWordList.filter(w => w.word === guesses[round].join(''));
 
-            if (isValid) submit();
+            if (isValid[0]) submit();
         } else if (pressed === "backspace") {
             // Remove last letter from the field
             backspace();
