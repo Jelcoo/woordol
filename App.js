@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBackspace, faTurnDown } from '@fortawesome/free-solid-svg-icons';
@@ -21,8 +21,8 @@ export default function App() {
         4: Array.from({ length: config.wordLength }).fill(''),
         5: Array.from({ length: config.wordLength }).fill(''),
     });
-    let letterIndex = useRef(0);
-    let round = useRef(0);
+    const [ letterIndex, setLetterIndex ] = useState(0);
+    const [ round, setRound ] = useState(0);
     const [ todaysWord, setTodaysWord ] = useState('');
 
     useEffect(() => {
@@ -38,23 +38,22 @@ export default function App() {
     }
 
     const submit = () => {
-        const roundNr = round.current;
         const newMarkers = { ...markers };
         const correctWord = todaysWord.split('');
         const notMarked = [];
 
         // Check correct letters
         correctWord.forEach((letter, i) => {
-            const guessedLetter = guesses[roundNr][i];
+            const guessedLetter = guesses[round][i];
 
             if (guessedLetter === letter) {
-                newMarkers[roundNr][i] = 'green';
+                newMarkers[round][i] = 'green';
                 correctWord[i] = '';
             } else notMarked.push(i);
         });
 
         // Check if all markers are green (= win)
-        if (newMarkers[roundNr].every((guess) => guess === 'green')) {
+        if (newMarkers[round].every((guess) => guess === 'green')) {
             // TODO: make win system
             setMarkers(newMarkers);
             return;
@@ -63,57 +62,51 @@ export default function App() {
         // Check letters in wrong spot
         if (notMarked.length) {
             notMarked.forEach((i) => {
-                const guessedLetter = guesses[roundNr][i];
+                const guessedLetter = guesses[round][i];
                 const position = correctWord.indexOf(guessedLetter);
 
             if (correctWord.includes(guessedLetter) && position !== i) {
-                newMarkers[roundNr][i] = 'yellow';
+                newMarkers[round][i] = 'yellow';
                 correctWord[position] = '';
-            } else newMarkers[roundNr][i] = "grey";
+            } else newMarkers[round][i] = "grey";
           });
         }
 
         setMarkers(newMarkers);
-        round.current = roundNr + 1;
-        letterIndex.current = 0;
+        setRound(round + 1);
+        setLetterIndex(0);
     };
 
     const backspace = () => {
-        const index = letterIndex.current;
-        const roundNr = round.current;
-
-        if (index !== 0) {
+        if (letterIndex !== 0) {
             setGuesses((prev) => {
                 const newGuesses = { ...prev };
-                newGuesses[roundNr][index - 1] = '';
+                newGuesses[round][letterIndex - 1] = '';
                 return newGuesses;
             });
 
-            letterIndex.current = index - 1;
+            setLetterIndex(letterIndex - 1);
         }
     };
 
     const enter = (key) => {
-        const index = letterIndex.current;
-        const roundNr = round.current;
-
         if (index < config.wordLength) {
             setGuesses((prev) => {
                 const newGuesses = { ...prev };
-                newGuesses[roundNr][index] = key.toLowerCase();
+                newGuesses[round][index] = key.toLowerCase();
                 return newGuesses;
             });
 
-            letterIndex.current = index + 1;
+            setLetterIndex(index + 1);
         }
     };
 
     const keyPress = async (key) => {
         const pressed = key.toLowerCase();
-        if (pressed === "enter" && !guesses[round.current].includes('')) {
+        if (pressed === "enter" && !guesses[round].includes('')) {
             // Fetch words & validate
             const savedWordList = JSON.parse(await dataManager.get('woordol_words'));
-            const isValid = savedWordList.filter(w => w.word === guesses[round.current].join(''));
+            const isValid = savedWordList.filter(w => w.word === guesses[round].join(''));
 
             if (isValid) submit();
         } else if (pressed === "backspace") {
