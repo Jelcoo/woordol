@@ -90,14 +90,14 @@ export default function App() {
     };
 
     const enter = (key) => {
-        if (index < config.wordLength) {
+        if (letterIndex < config.wordLength) {
             setGuesses((prev) => {
                 const newGuesses = { ...prev };
-                newGuesses[round][index] = key.toLowerCase();
+                newGuesses[round][letterIndex] = key.toLowerCase();
                 return newGuesses;
             });
 
-            setLetterIndex(index + 1);
+            setLetterIndex(letterIndex + 1);
         }
     };
 
