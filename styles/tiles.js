@@ -8,8 +8,9 @@ export const TileContainer = styled.View`
 export const TileRow = styled.View`
     display: flex;
     flex-direction: row;
-    width: 75%;
-    margin: 0px 10px 5px;
+    align-items: center;
+    width: 77%;
+    margin-bottom: 5px;
 `;
 
 export const Tile = styled.View`
