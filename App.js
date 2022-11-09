@@ -27,6 +27,7 @@ export default function App() {
     const [ round, setRound ] = useState(0);
     const [ todaysWord, setTodaysWord ] = useState('');
     const [ modalVisible, setModalVisible ] = useState(false);
+    const [ incorrect, setIncorrect ] = useState(-1);
 
     useEffect(() => {
         dataManager.store('woordol_words', JSON.stringify(guessWordList));
@@ -36,6 +37,12 @@ export default function App() {
     useEffect(() => {
         setData();
     }, []);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setIncorrect(-1);
+        }, 2000);
+    }, [incorrect]);
 
     const checkTodaysWord = async () => {
         const savedWordList = JSON.parse(await dataManager.get('woordol_words'));
@@ -157,7 +164,11 @@ export default function App() {
             // Fetch words & validate
             const isValid = enterWordList.includes(guesses[round].join(''));
 
-            if (isValid[0]) submit();
+            if (isValid) {
+                submit();
+            } else {
+                setIncorrect(round);
+            }
         } else if (pressed === "backspace") {
             // Remove last letter from the field
             backspace();
@@ -202,7 +213,7 @@ export default function App() {
                 {Object.values(guesses).map((word, i) => (
                     <TileRow key={i}>
                         {word.map((letter, ind) => (
-                            <Tile key={ind+letter} style={utils.markerToColor(markers[i][ind])}>
+                            <Tile key={ind+letter} style={utils.markerToColor(markers[i][ind], incorrect === i)}>
                                 <TileText>
                                     {letter}
                                 </TileText>
