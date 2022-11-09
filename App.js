@@ -167,9 +167,10 @@ export default function App() {
         }
     };
 
-    const onShare = async () => {
+    const openShare = async () => {
         try {
             let shareMessage = '';
+            shareMessage += `${new Date().toISOString().slice(0, 10).split('-').reverse().join('-')}\n`;
             Object.keys(markers).forEach((v, i) => {
                 markers[i].forEach(m => {
                     if (m === 'green') shareMessage += '🟩';
@@ -255,7 +256,7 @@ export default function App() {
                         <ModalView>
                             <ModalText>Hello World!</ModalText>
                             <View style={{ marginTop: 50 }}>
-                                <Button onPress={onShare} title="Share" />
+                                <Button onPress={openShare} title="Share" />
                             </View>
                             <Pressable onPress={() => setModalVisible(!modalVisible)}>
                                 <ModalText>Hide Modal</ModalText>
