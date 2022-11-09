@@ -58,7 +58,7 @@ export default function App() {
             }
         }
 
-        if (savedMarkers[round].every((guess) => guess === 'green')) setModalVisible(true);
+        if (savedMarkers && savedMarkers[round].every((guess) => guess === 'green')) setModalVisible(true);
     }
 
     const submit = () => {
