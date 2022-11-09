@@ -4,7 +4,8 @@ import { StatusBar } from 'expo-status-bar';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBackspace, faTurnDown } from '@fortawesome/free-solid-svg-icons';
 import * as config from './config';
-import { wordList } from './data/words';
+import { guessWordList } from './data/guessWords';
+import { enterWordList } from './data/enterWords';
 import * as dataManager from './data/manager';
 import * as utils from './utils';
 
@@ -28,7 +29,7 @@ export default function App() {
     const [ modalVisible, setModalVisible ] = useState(false);
 
     useEffect(() => {
-        dataManager.store('woordol_words', JSON.stringify(wordList));
+        dataManager.store('woordol_words', JSON.stringify(guessWordList));
         checkTodaysWord();
     }, []);
 
@@ -154,8 +155,7 @@ export default function App() {
         const pressed = key.toLowerCase();
         if (pressed === "enter" && !guesses[round].includes('')) {
             // Fetch words & validate
-            const savedWordList = JSON.parse(await dataManager.get('woordol_words'));
-            const isValid = savedWordList.filter(w => w.word === guesses[round].join(''));
+            const isValid = enterWordList.includes(guesses[round].join(''));
 
             if (isValid[0]) submit();
         } else if (pressed === "backspace") {
