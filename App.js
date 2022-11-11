@@ -53,15 +53,12 @@ export default function App() {
 
     const setData = async () => {
         const savedGuesses = JSON.parse(await dataManager.get(`woordol_guesses_${today}`));
-        console.log(savedGuesses);
         if (savedGuesses) setGuesses(savedGuesses);
 
         const savedMarkers = JSON.parse(await dataManager.get(`woordol_markers_${today}`));
-        console.log(savedMarkers);
         if (savedMarkers) setMarkers(savedMarkers);
 
         const savedData = JSON.parse(await dataManager.get(`woordol_data_${today}`));
-        console.log(savedData);
         if (savedData) {
             if (savedData.round) {
                 setRound(savedData.round);
@@ -71,7 +68,13 @@ export default function App() {
             }
         }
 
-        if (savedMarkers && savedMarkers[round].every((guess) => guess === 'green')) setModalVisible(true);
+        if (savedMarkers && savedMarkers[savedData.round].every((guess) => guess === 'green')) setModalVisible(true);
+    }
+
+    const saveData = function (guesses, markers, data) {
+        dataManager.store(`woordol_guesses_${today}`, guesses);
+        dataManager.store(`woordol_markers_${today}`, markers);
+        dataManager.store(`woordol_data_${today}`, data);
     }
 
     const submit = () => {
@@ -100,9 +103,7 @@ export default function App() {
                 index: letterIndex - 1,
             });
 
-            dataManager.store(`woordol_guesses_${today}`, todaysGuesses);
-            dataManager.store(`woordol_markers_${today}`, todaysMarkers);
-            dataManager.store(`woordol_data_${today}`, todaysData);
+            saveData(todaysGuesses, todaysMarkers, todaysData);
 
             setModalVisible(true);
             setMarkers(newMarkers);
@@ -121,6 +122,17 @@ export default function App() {
             } else newMarkers[round][i] = "grey";
           });
         }
+
+        const todaysGuesses = JSON.stringify(guesses);
+        const todaysMarkers = JSON.stringify(newMarkers);
+        const todaysData = JSON.stringify({
+            day: today,
+            word: todaysWord,
+            round: round + 1,
+            index: 0,
+        });
+
+        saveData(todaysGuesses, todaysMarkers, todaysData);
 
         setMarkers(newMarkers);
         setRound(round + 1);
