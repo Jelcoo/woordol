@@ -15,14 +15,21 @@ import { Container, ModalContainer, ModalView, ModalText, ModalShareButtonView, 
 
 export default function App() {
     const today = new Date().toISOString().slice(0, 10);
-    const [ guesses, setGuesses ] = useState({ ...config.newGame });
+    const [ guesses, setGuesses ] = useState({
+        0: Array.from({ length: 5 }).fill(''),
+        1: Array.from({ length: 5 }).fill(''),
+        2: Array.from({ length: 5 }).fill(''),
+        3: Array.from({ length: 5 }).fill(''),
+        4: Array.from({ length: 5 }).fill(''),
+        5: Array.from({ length: 5 }).fill(''),
+    });
     const [ markers, setMarkers ] = useState({
-        0: Array.from({ length: config.wordLength }).fill(''),
-        1: Array.from({ length: config.wordLength }).fill(''),
-        2: Array.from({ length: config.wordLength }).fill(''),
-        3: Array.from({ length: config.wordLength }).fill(''),
-        4: Array.from({ length: config.wordLength }).fill(''),
-        5: Array.from({ length: config.wordLength }).fill(''),
+        0: Array.from({ length: 5 }).fill(''),
+        1: Array.from({ length: 5 }).fill(''),
+        2: Array.from({ length: 5 }).fill(''),
+        3: Array.from({ length: 5 }).fill(''),
+        4: Array.from({ length: 5 }).fill(''),
+        5: Array.from({ length: 5 }).fill(''),
     });
     const [ letterIndex, setLetterIndex ] = useState(0);
     const [ round, setRound ] = useState(0);
@@ -59,16 +66,13 @@ export default function App() {
         if (savedMarkers) setMarkers(savedMarkers);
 
         const savedData = JSON.parse(await dataManager.get(`woordol_data_${today}`));
-        if (savedData) {
-            if (savedData.round) {
-                setRound(savedData.round);
-            }
-            if (savedData.index) {
-                setLetterIndex(savedData.index);
-            }
+        if (!savedData) return;
+        if (savedData.round) setRound(savedData.round);
+        if (savedData.index) setLetterIndex(savedData.index);
+        if (!savedData.round) return;
+        if (savedMarkers && savedMarkers[savedData.round].every((guess) => guess === 'green') || savedData.round === 5) {
+            setModalVisible(true);
         }
-
-        if (savedMarkers && savedMarkers[savedData.round].every((guess) => guess === 'green')) setModalVisible(true);
     }
 
     const saveData = function (guesses, markers, data) {
@@ -125,18 +129,28 @@ export default function App() {
 
         const todaysGuesses = JSON.stringify(guesses);
         const todaysMarkers = JSON.stringify(newMarkers);
-        const todaysData = JSON.stringify({
-            day: today,
-            word: todaysWord,
-            round: round + 1,
-            index: 0,
-        });
 
-        saveData(todaysGuesses, todaysMarkers, todaysData);
-
-        setMarkers(newMarkers);
-        setRound(round + 1);
-        setLetterIndex(0);
+        if (round === 5) {
+            setModalVisible(true);
+            const todaysData = JSON.stringify({
+                day: today,
+                word: todaysWord,
+                round: round,
+                index: 0,
+            });
+            saveData(todaysGuesses, todaysMarkers, todaysData);
+        } else {
+            setMarkers(newMarkers);
+            setRound(round + 1);
+            setLetterIndex(0);
+            const todaysData = JSON.stringify({
+                day: today,
+                word: todaysWord,
+                round: round + 1,
+                index: 0,
+            });
+            saveData(todaysGuesses, todaysMarkers, todaysData);
+        }
     };
 
     const backspace = () => {
@@ -163,7 +177,7 @@ export default function App() {
     };
 
     const enter = (key) => {
-        if (letterIndex < config.wordLength) {
+        if (letterIndex < 5) {
             const newGuesses = guesses;
             newGuesses[round][letterIndex] = key.toLowerCase();
             setGuesses(newGuesses);
@@ -176,7 +190,7 @@ export default function App() {
                 day: today,
                 word: todaysWord,
                 round: round,
-                index: letterIndex - 1,
+                index: letterIndex + 1,
             });
 
             dataManager.store(`woordol_guesses_${today}`, todaysGuesses);

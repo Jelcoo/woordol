@@ -5,14 +5,3 @@ export const keyboardRows = [
 ];
 
 export const allKeys = keyboardRows.flat();
-
-export const wordLength = 5;
-
-export const newGame = {
-	0: Array.from({ length: wordLength }).fill(''),
-	1: Array.from({ length: wordLength }).fill(''),
-	2: Array.from({ length: wordLength }).fill(''),
-	3: Array.from({ length: wordLength }).fill(''),
-	4: Array.from({ length: wordLength }).fill(''),
-	5: Array.from({ length: wordLength }).fill(''),
-};
