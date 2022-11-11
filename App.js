@@ -285,24 +285,22 @@ export default function App() {
                             <ModalText>
                                 Jouw Woordol van {new Date().toISOString().slice(0, 10).split('-').reverse().join('-')}
                                 <View>
-                                    <Text>
-                                        {Object.keys(markers).map((r, i) => (
-                                            <View key={i}>
-                                                {markers[i].map((marker, index) => (
-                                                    <Text key={marker+index} style={{ fontSize: 25 }}>
-                                                        {marker === 'green' ?
-                                                            '🟩'
-                                                            :
-                                                            marker === 'yellow' ?
-                                                            '🟨'
-                                                            :
-                                                            '⬛'
-                                                        }
-                                                    </Text>
-                                                ))}
-                                            </View>
-                                        ))}
-                                    </Text>
+                                    {Object.keys(markers).map((r, i) => (
+                                        <Text key={i} style={{ display: 'flex', flexDirection: 'row', flex: 1 }}>
+                                            {markers[i].map((marker, index) => (
+                                                <Text key={marker+index} style={{ fontSize: 25 }}>
+                                                    {marker === 'green' ?
+                                                        '🟩'
+                                                        :
+                                                        marker === 'yellow' ?
+                                                        '🟨'
+                                                        :
+                                                        '⬛'
+                                                    }
+                                                </Text>
+                                            ))}
+                                        </Text>
+                                    ))}
                                 </View>
                             </ModalText>
                             <ModalShareButtonView>

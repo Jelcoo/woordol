@@ -28,7 +28,7 @@ export const ModalText = styled.Text`
 `;
 
 export const ModalShareButtonView = styled.View`
-    top: 60%;
+    top: 55%;
 `;
 
 export const ModalShareButton = styled.Button`
