@@ -14,6 +14,7 @@ import { KeyboardContainer, KeyboardKey, KeyboardKeyText, KeyboardRow } from './
 import { Container, ModalContainer, ModalView, ModalText } from './styles/home';
 
 export default function App() {
+    const today = new Date().toISOString().slice(0, 10);
     const [ guesses, setGuesses ] = useState({ ...config.newGame });
     const [ markers, setMarkers ] = useState({
         0: Array.from({ length: config.wordLength }).fill(''),
@@ -46,23 +47,27 @@ export default function App() {
 
     const checkTodaysWord = async () => {
         const savedWordList = JSON.parse(await dataManager.get('woordol_words'));
-        const today = new Date().toISOString().slice(0, 10);
         const word = savedWordList.filter(w => w.use_on === today);
         if (word) setTodaysWord(word[0].word);
     }
 
     const setData = async () => {
-        const today = new Date().toISOString().slice(0, 10);
         const savedGuesses = JSON.parse(await dataManager.get(`woordol_guesses_${today}`));
+        console.log(savedGuesses);
         if (savedGuesses) setGuesses(savedGuesses);
 
         const savedMarkers = JSON.parse(await dataManager.get(`woordol_markers_${today}`));
+        console.log(savedMarkers);
         if (savedMarkers) setMarkers(savedMarkers);
 
         const savedData = JSON.parse(await dataManager.get(`woordol_data_${today}`));
+        console.log(savedData);
         if (savedData) {
             if (savedData.round) {
                 setRound(savedData.round);
+            }
+            if (savedData.index) {
+                setLetterIndex(savedData.index);
             }
         }
 
@@ -86,18 +91,18 @@ export default function App() {
 
         // Check if all markers are green (= win)
         if (newMarkers[round].every((guess) => guess === 'green')) {
-            const todaysDate = new Date().toISOString().slice(0, 10);
             const todaysGuesses = JSON.stringify(guesses);
             const todaysMarkers = JSON.stringify(newMarkers);
             const todaysData = JSON.stringify({
-                day: todaysDate,
+                day: today,
                 word: todaysWord,
                 round: round,
+                index: letterIndex - 1,
             });
 
-            dataManager.store(`woordol_guesses_${todaysDate}`, todaysGuesses);
-            dataManager.store(`woordol_markers_${todaysDate}`, todaysMarkers);
-            dataManager.store('woordol_data', todaysData);
+            dataManager.store(`woordol_guesses_${today}`, todaysGuesses);
+            dataManager.store(`woordol_markers_${today}`, todaysMarkers);
+            dataManager.store(`woordol_data_${today}`, todaysData);
 
             setModalVisible(true);
             setMarkers(newMarkers);
@@ -124,37 +129,47 @@ export default function App() {
 
     const backspace = () => {
         if (letterIndex !== 0) {
-            setGuesses((prev) => {
-                const newGuesses = { ...prev };
-                newGuesses[round][letterIndex - 1] = '';
-                return newGuesses;
-            });
+            const newGuesses = guesses;
+            newGuesses[round][letterIndex - 1] = '';
+            setGuesses(newGuesses);
 
             setLetterIndex(letterIndex - 1);
 
             const todaysGuesses = JSON.stringify(guesses);
             const todaysMarkers = JSON.stringify(markers);
+            const todaysData = JSON.stringify({
+                day: today,
+                word: todaysWord,
+                round: round,
+                index: letterIndex - 1,
+            });
 
-            dataManager.store('woordol_guesses', todaysGuesses);
-            dataManager.store('woordol_markers', todaysMarkers);
+            dataManager.store(`woordol_guesses_${today}`, todaysGuesses);
+            dataManager.store(`woordol_markers_${today}`, todaysMarkers);
+            dataManager.store(`woordol_data_${today}`, todaysData);
         }
     };
 
     const enter = (key) => {
         if (letterIndex < config.wordLength) {
-            setGuesses((prev) => {
-                const newGuesses = { ...prev };
-                newGuesses[round][letterIndex] = key.toLowerCase();
-                return newGuesses;
-            });
+            const newGuesses = guesses;
+            newGuesses[round][letterIndex] = key.toLowerCase();
+            setGuesses(newGuesses);
 
             setLetterIndex(letterIndex + 1);
 
             const todaysGuesses = JSON.stringify(guesses);
             const todaysMarkers = JSON.stringify(markers);
+            const todaysData = JSON.stringify({
+                day: today,
+                word: todaysWord,
+                round: round,
+                index: letterIndex - 1,
+            });
 
-            dataManager.store('woordol_guesses', todaysGuesses);
-            dataManager.store('woordol_markers', todaysMarkers);
+            dataManager.store(`woordol_guesses_${today}`, todaysGuesses);
+            dataManager.store(`woordol_markers_${today}`, todaysMarkers);
+            dataManager.store(`woordol_data_${today}`, todaysData);
         }
     };
 
