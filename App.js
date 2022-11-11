@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Alert, Modal, Pressable, View, Button, Share } from "react-native";
+import { Text, Modal, View, Share } from "react-native";
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBackspace, faTurnDown } from '@fortawesome/free-solid-svg-icons';
@@ -11,7 +11,7 @@ import * as utils from './utils';
 
 import { TileContainer, TileText, Tile, TileRow } from './styles/tiles';
 import { KeyboardContainer, KeyboardKey, KeyboardKeyText, KeyboardRow } from './styles/keyboard';
-import { Container, ModalContainer, ModalView, ModalText } from './styles/home';
+import { Container, ModalContainer, ModalView, ModalText, ModalShareButtonView, ModalShareButton } from './styles/home';
 
 export default function App() {
     const today = new Date().toISOString().slice(0, 10);
@@ -208,7 +208,7 @@ export default function App() {
     const openShare = async () => {
         try {
             let shareMessage = '';
-            shareMessage += `${new Date().toISOString().slice(0, 10).split('-').reverse().join('-')}\n`;
+            shareMessage += `Mijn Woordol van ${new Date().toISOString().slice(0, 10).split('-').reverse().join('-')}\n`;
             Object.keys(markers).forEach((v, i) => {
                 markers[i].forEach(m => {
                     if (m === 'green') shareMessage += '🟩';
@@ -217,20 +217,11 @@ export default function App() {
                 });
                 shareMessage += '\n';
             });
-            const result = await Share.share({
+            await Share.share({
                 message: shareMessage,
             });
-            if (result.action === Share.sharedAction) {
-                if (result.activityType) {
-                    // shared with activity type of result.activityType
-                } else {
-                    // shared
-                }
-            } else if (result.action === Share.dismissedAction) {
-                // dismissed
-            }
         } catch (error) {
-            alert(error.message);
+
         }
     };
 
@@ -286,19 +277,37 @@ export default function App() {
                     transparent={true}
                     visible={modalVisible}
                     onRequestClose={() => {
-                        Alert.alert("Modal has been closed.");
                         setModalVisible(!modalVisible);
                     }}
                 >
                     <ModalContainer>
                         <ModalView>
-                            <ModalText>Hello World!</ModalText>
-                            <View style={{ marginTop: 50 }}>
-                                <Button onPress={openShare} title="Share" />
-                            </View>
-                            <Pressable onPress={() => setModalVisible(!modalVisible)}>
-                                <ModalText>Hide Modal</ModalText>
-                            </Pressable>
+                            <ModalText>
+                                Jouw Woordol van {new Date().toISOString().slice(0, 10).split('-').reverse().join('-')}
+                                <View>
+                                    <Text>
+                                        {Object.keys(markers).map((r, i) => (
+                                            <View key={i}>
+                                                {markers[i].map((marker, index) => (
+                                                    <Text key={marker+index} style={{ fontSize: 25 }}>
+                                                        {marker === 'green' ?
+                                                            '🟩'
+                                                            :
+                                                            marker === 'yellow' ?
+                                                            '🟨'
+                                                            :
+                                                            '⬛'
+                                                        }
+                                                    </Text>
+                                                ))}
+                                            </View>
+                                        ))}
+                                    </Text>
+                                </View>
+                            </ModalText>
+                            <ModalShareButtonView>
+                                <ModalShareButton onPress={openShare} title="Resultaten Delen" />
+                            </ModalShareButtonView>
                         </ModalView>
                     </ModalContainer>
                 </Modal>

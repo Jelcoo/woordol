@@ -12,8 +12,9 @@ export const ModalContainer = styled.View`
 `;
 
 export const ModalView = styled.View`
-    margin: 20px;
-    background-color: white;
+    height: 85%;
+    width: 85%;
+    background-color: #2a2a2a;
     border-radius: 20px;
     padding: 35px;
     align-items: center;
@@ -21,6 +22,15 @@ export const ModalView = styled.View`
 `;
 
 export const ModalText = styled.Text`
-    marginBottom: 15px;
     text-align: center;
+    color: white;
+    font-size: 20px;
+`;
+
+export const ModalShareButtonView = styled.View`
+    top: 60%;
+`;
+
+export const ModalShareButton = styled.Button`
+
 `;
