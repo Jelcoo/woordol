@@ -60,13 +60,15 @@ export default function App() {
     }
 
     const setData = async () => {
-        // Laad alle data in
+        // Laad alle geraden woorden in
         const savedGuesses = JSON.parse(await dataManager.get(`woordol_guesses_${today}`));
         if (savedGuesses) setGuesses(savedGuesses);
 
+        // Laad alle markers in
         const savedMarkers = JSON.parse(await dataManager.get(`woordol_markers_${today}`));
         if (savedMarkers) setMarkers(savedMarkers);
 
+        // Laad overige data in
         const savedData = JSON.parse(await dataManager.get(`woordol_data_${today}`));
         if (!savedData) return;
         if (savedData.round) setRound(savedData.round);
@@ -101,16 +103,16 @@ export default function App() {
 
         // Controleer of alle letters groen zijn
         if (newMarkers[round].every((guess) => guess === 'green')) {
-            const todaysGuesses = JSON.stringify(guesses);
-            const todaysMarkers = JSON.stringify(newMarkers);
-            const todaysData = JSON.stringify({
-                day: today,
-                word: todaysWord,
-                round: round,
-                index: letterIndex - 1,
-            });
-
-            saveData(todaysGuesses, todaysMarkers, todaysData);
+            saveData(
+                JSON.stringify(guesses),
+                JSON.stringify(newMarkers),
+                JSON.stringify({
+                    day: today,
+                    word: todaysWord,
+                    round: round,
+                    index: letterIndex - 1,
+                }),
+            );
 
             setModalVisible(true);
             setMarkers(newMarkers);
@@ -123,37 +125,42 @@ export default function App() {
                 const guessedLetter = guesses[round][i];
                 const position = correctWord.indexOf(guessedLetter);
 
-            if (correctWord.includes(guessedLetter) && position !== i) {
-                newMarkers[round][i] = 'yellow';
-                correctWord[position] = '';
-            } else newMarkers[round][i] = "grey";
+                // Controleer of de letter in het woord zit
+                if (correctWord.includes(guessedLetter) && position !== i) {
+                    newMarkers[round][i] = 'yellow';
+                    correctWord[position] = '';
+                } else newMarkers[round][i] = "grey";
           });
         }
-
-        const todaysGuesses = JSON.stringify(guesses);
-        const todaysMarkers = JSON.stringify(newMarkers);
 
         // Als dit de laatste ronde is, laat het eindscherm zien, anders naar de volgende ronde
         if (round === 5) {
             setModalVisible(true);
-            const todaysData = JSON.stringify({
-                day: today,
-                word: todaysWord,
-                round: round,
-                index: 0,
-            });
-            saveData(todaysGuesses, todaysMarkers, todaysData);
+            saveData(
+                JSON.stringify(guesses),
+                JSON.stringify(newMarkers),
+                JSON.stringify({
+                    day: today,
+                    word: todaysWord,
+                    round: round,
+                    index: 0,
+                }),
+            );
         } else {
             setMarkers(newMarkers);
             setRound(round + 1);
             setLetterIndex(0);
-            const todaysData = JSON.stringify({
-                day: today,
-                word: todaysWord,
-                round: round + 1,
-                index: 0,
-            });
-            saveData(todaysGuesses, todaysMarkers, todaysData);
+
+            saveData(
+                JSON.stringify(guesses),
+                JSON.stringify(newMarkers),
+                JSON.stringify({
+                    day: today,
+                    word: todaysWord,
+                    round: round + 1,
+                    index: 0,
+                }),
+            );
         }
     };
 
@@ -163,54 +170,49 @@ export default function App() {
             // Fetch words & validate
             const isValid = enterWordList.includes(guesses[round].join(''));
 
-            if (isValid) {
-                submit();
-            } else {
-                setIncorrect(round);
-            }
+            if (isValid) submit();
+            else setIncorrect(round);
         } else if (pressed === "backspace") {
-            // Remove last letter from the field
+            // Controlleer of de letter niet 0 is
             if (letterIndex !== 0) {
+                // Verwijder de laatste letter
                 const newGuesses = guesses;
                 newGuesses[round][letterIndex - 1] = '';
                 setGuesses(newGuesses);
-    
+
                 setLetterIndex(letterIndex - 1);
     
-                const todaysGuesses = JSON.stringify(guesses);
-                const todaysMarkers = JSON.stringify(markers);
-                const todaysData = JSON.stringify({
-                    day: today,
-                    word: todaysWord,
-                    round: round,
-                    index: letterIndex - 1,
-                });
-    
-                dataManager.store(`woordol_guesses_${today}`, todaysGuesses);
-                dataManager.store(`woordol_markers_${today}`, todaysMarkers);
-                dataManager.store(`woordol_data_${today}`, todaysData);
+                saveData(
+                    JSON.stringify(guesses),
+                    JSON.stringify(markers),
+                    JSON.stringify({
+                        day: today,
+                        word: todaysWord,
+                        round: round,
+                        index: letterIndex - 1,
+                    }),
+                );
             }
         } else if (pressed !== "enter") {
-            // Enter new letter into the field
+            // Controlleer of er al 5 letters zijn toegevoegd
             if (letterIndex < 5) {
+                // Voeg een nieuwe letter toe
                 const newGuesses = guesses;
                 newGuesses[round][letterIndex] = key.toLowerCase();
                 setGuesses(newGuesses);
     
                 setLetterIndex(letterIndex + 1);
-    
-                const todaysGuesses = JSON.stringify(guesses);
-                const todaysMarkers = JSON.stringify(markers);
-                const todaysData = JSON.stringify({
-                    day: today,
-                    word: todaysWord,
-                    round: round,
-                    index: letterIndex + 1,
-                });
-    
-                dataManager.store(`woordol_guesses_${today}`, todaysGuesses);
-                dataManager.store(`woordol_markers_${today}`, todaysMarkers);
-                dataManager.store(`woordol_data_${today}`, todaysData);
+
+                saveData(
+                    JSON.stringify(guesses),
+                    JSON.stringify(markers),
+                    JSON.stringify({
+                        day: today,
+                        word: todaysWord,
+                        round: round,
+                        index: letterIndex + 1,
+                    }),
+                );
             }
         }
     };
