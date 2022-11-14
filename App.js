@@ -53,12 +53,14 @@ export default function App() {
     }, [incorrect]);
 
     const checkTodaysWord = async () => {
+        // Haal het woord van vandaag op
         const savedWordList = JSON.parse(await dataManager.get('woordol_words'));
         const word = savedWordList.filter(w => w.use_on === today);
         if (word) setTodaysWord(word[0].word);
     }
 
     const setData = async () => {
+        // Laad alle data in
         const savedGuesses = JSON.parse(await dataManager.get(`woordol_guesses_${today}`));
         if (savedGuesses) setGuesses(savedGuesses);
 
@@ -76,6 +78,7 @@ export default function App() {
     }
 
     const saveData = function (guesses, markers, data) {
+        // Sla data op
         dataManager.store(`woordol_guesses_${today}`, guesses);
         dataManager.store(`woordol_markers_${today}`, markers);
         dataManager.store(`woordol_data_${today}`, data);
@@ -86,7 +89,7 @@ export default function App() {
         const correctWord = todaysWord.split('');
         const notMarked = [];
 
-        // Check correct letters
+        // Controleer of de letter correct is
         correctWord.forEach((letter, i) => {
             const guessedLetter = guesses[round][i];
 
@@ -96,7 +99,7 @@ export default function App() {
             } else notMarked.push(i);
         });
 
-        // Check if all markers are green (= win)
+        // Controleer of alle letters groen zijn
         if (newMarkers[round].every((guess) => guess === 'green')) {
             const todaysGuesses = JSON.stringify(guesses);
             const todaysMarkers = JSON.stringify(newMarkers);
@@ -114,7 +117,7 @@ export default function App() {
             return;
         }
 
-        // Check letters in wrong spot
+        // Controleer alle letters op de verkeerde plek
         if (notMarked.length) {
             notMarked.forEach((i) => {
                 const guessedLetter = guesses[round][i];
@@ -130,6 +133,7 @@ export default function App() {
         const todaysGuesses = JSON.stringify(guesses);
         const todaysMarkers = JSON.stringify(newMarkers);
 
+        // Als dit de laatste ronde is, laat het eindscherm zien, anders naar de volgende ronde
         if (round === 5) {
             setModalVisible(true);
             const todaysData = JSON.stringify({
