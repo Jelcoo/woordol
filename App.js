@@ -153,52 +153,6 @@ export default function App() {
         }
     };
 
-    const backspace = () => {
-        if (letterIndex !== 0) {
-            const newGuesses = guesses;
-            newGuesses[round][letterIndex - 1] = '';
-            setGuesses(newGuesses);
-
-            setLetterIndex(letterIndex - 1);
-
-            const todaysGuesses = JSON.stringify(guesses);
-            const todaysMarkers = JSON.stringify(markers);
-            const todaysData = JSON.stringify({
-                day: today,
-                word: todaysWord,
-                round: round,
-                index: letterIndex - 1,
-            });
-
-            dataManager.store(`woordol_guesses_${today}`, todaysGuesses);
-            dataManager.store(`woordol_markers_${today}`, todaysMarkers);
-            dataManager.store(`woordol_data_${today}`, todaysData);
-        }
-    };
-
-    const enter = (key) => {
-        if (letterIndex < 5) {
-            const newGuesses = guesses;
-            newGuesses[round][letterIndex] = key.toLowerCase();
-            setGuesses(newGuesses);
-
-            setLetterIndex(letterIndex + 1);
-
-            const todaysGuesses = JSON.stringify(guesses);
-            const todaysMarkers = JSON.stringify(markers);
-            const todaysData = JSON.stringify({
-                day: today,
-                word: todaysWord,
-                round: round,
-                index: letterIndex + 1,
-            });
-
-            dataManager.store(`woordol_guesses_${today}`, todaysGuesses);
-            dataManager.store(`woordol_markers_${today}`, todaysMarkers);
-            dataManager.store(`woordol_data_${today}`, todaysData);
-        }
-    };
-
     const keyPress = async (key) => {
         const pressed = key.toLowerCase();
         if (pressed === "enter" && !guesses[round].includes('')) {
@@ -212,10 +166,48 @@ export default function App() {
             }
         } else if (pressed === "backspace") {
             // Remove last letter from the field
-            backspace();
+            if (letterIndex !== 0) {
+                const newGuesses = guesses;
+                newGuesses[round][letterIndex - 1] = '';
+                setGuesses(newGuesses);
+    
+                setLetterIndex(letterIndex - 1);
+    
+                const todaysGuesses = JSON.stringify(guesses);
+                const todaysMarkers = JSON.stringify(markers);
+                const todaysData = JSON.stringify({
+                    day: today,
+                    word: todaysWord,
+                    round: round,
+                    index: letterIndex - 1,
+                });
+    
+                dataManager.store(`woordol_guesses_${today}`, todaysGuesses);
+                dataManager.store(`woordol_markers_${today}`, todaysMarkers);
+                dataManager.store(`woordol_data_${today}`, todaysData);
+            }
         } else if (pressed !== "enter") {
             // Enter new letter into the field
-            enter(pressed);
+            if (letterIndex < 5) {
+                const newGuesses = guesses;
+                newGuesses[round][letterIndex] = key.toLowerCase();
+                setGuesses(newGuesses);
+    
+                setLetterIndex(letterIndex + 1);
+    
+                const todaysGuesses = JSON.stringify(guesses);
+                const todaysMarkers = JSON.stringify(markers);
+                const todaysData = JSON.stringify({
+                    day: today,
+                    word: todaysWord,
+                    round: round,
+                    index: letterIndex + 1,
+                });
+    
+                dataManager.store(`woordol_guesses_${today}`, todaysGuesses);
+                dataManager.store(`woordol_markers_${today}`, todaysMarkers);
+                dataManager.store(`woordol_data_${today}`, todaysData);
+            }
         }
     };
 
