@@ -24,7 +24,7 @@ export const ModalView = styled.View`
 export const ModalText = styled.Text`
     text-align: center;
     color: white;
-    font-size: 20px;
+    font-size: 15px;
 `;
 
 export const ModalShareButtonView = styled.View`
