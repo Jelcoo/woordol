@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Text, Modal, View, Share } from "react-native";
+import { Text, Modal, View, Share } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBackspace, faTurnDown } from '@fortawesome/free-solid-svg-icons';
@@ -129,7 +129,7 @@ export default function App() {
                 if (correctWord.includes(guessedLetter) && position !== i) {
                     newMarkers[round][i] = 'yellow';
                     correctWord[position] = '';
-                } else newMarkers[round][i] = "grey";
+                } else newMarkers[round][i] = 'grey';
           });
         }
 
@@ -166,13 +166,13 @@ export default function App() {
 
     const keyPress = async (key) => {
         const pressed = key.toLowerCase();
-        if (pressed === "enter" && !guesses[round].includes('')) {
+        if (pressed === 'enter' && !guesses[round].includes('')) {
             // Fetch words & validate
             const isValid = enterWordList.includes(guesses[round].join(''));
 
             if (isValid) submit();
             else setIncorrect(round);
-        } else if (pressed === "backspace") {
+        } else if (pressed === 'backspace') {
             // Controlleer of de letter niet 0 is
             if (letterIndex !== 0) {
                 // Verwijder de laatste letter
@@ -193,7 +193,7 @@ export default function App() {
                     }),
                 );
             }
-        } else if (pressed !== "enter") {
+        } else if (pressed !== 'enter') {
             // Controlleer of er al 5 letters zijn toegevoegd
             if (letterIndex < 5) {
                 // Voeg een nieuwe letter toe
@@ -282,10 +282,10 @@ export default function App() {
                     </KeyboardRow>
                 ))}
             </KeyboardContainer>
-            <StatusBar style="auto" />
+            <StatusBar style={'auto'}/>
             <ModalContainer>
                 <Modal
-                    animationType="slide"
+                    animationType={'slide'}
                     transparent={true}
                     visible={modalVisible}
                     onRequestClose={() => {
@@ -316,7 +316,7 @@ export default function App() {
                                 </View>
                             </ModalText>
                             <ModalShareButtonView>
-                                <ModalShareButton onPress={openShare} title="Resultaten Delen" />
+                                <ModalShareButton onPress={openShare} title={'Resultaten Delen'} />
                             </ModalShareButtonView>
                         </ModalView>
                     </ModalContainer>
