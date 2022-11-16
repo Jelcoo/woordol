@@ -57,7 +57,7 @@ export default function App() {
         const savedWordList = JSON.parse(await dataManager.get('woordol_words'));
         const word = savedWordList.filter(w => w.use_on === today);
         if (word) setTodaysWord(word[0].word);
-    }
+    };
 
     const setData = async () => {
         // Laad alle geraden woorden in
@@ -77,14 +77,67 @@ export default function App() {
         if (savedMarkers && savedMarkers[savedData.round].every((guess) => guess === 'green') || savedData.round === 5) {
             setModalVisible(true);
         }
-    }
+    };
 
     const saveData = function (guesses, markers, data) {
         // Sla data op
         dataManager.store(`woordol_guesses_${today}`, guesses);
         dataManager.store(`woordol_markers_${today}`, markers);
         dataManager.store(`woordol_data_${today}`, data);
-    }
+    };
+
+    const keyPress = async (key) => {
+        const pressed = key.toLowerCase();
+        if (pressed === 'enter' && !guesses[round].includes('')) {
+            // Fetch words & validate
+            const isValid = enterWordList.includes(guesses[round].join(''));
+
+            if (isValid) submit();
+            else setIncorrect(round);
+        } else if (pressed === 'backspace') {
+            // Controlleer of de letter niet 0 is
+            if (letterIndex !== 0) {
+                // Verwijder de laatste letter
+                const newGuesses = guesses;
+                newGuesses[round][letterIndex - 1] = '';
+                setGuesses(newGuesses);
+
+                setLetterIndex(letterIndex - 1);
+    
+                saveData(
+                    JSON.stringify(guesses),
+                    JSON.stringify(markers),
+                    JSON.stringify({
+                        day: today,
+                        word: todaysWord,
+                        round: round,
+                        index: letterIndex - 1,
+                    }),
+                );
+            }
+        } else if (pressed !== 'enter') {
+            // Controlleer of er al 5 letters zijn toegevoegd
+            if (letterIndex < 5) {
+                // Voeg een nieuwe letter toe
+                const newGuesses = guesses;
+                newGuesses[round][letterIndex] = key.toLowerCase();
+                setGuesses(newGuesses);
+    
+                setLetterIndex(letterIndex + 1);
+
+                saveData(
+                    JSON.stringify(guesses),
+                    JSON.stringify(markers),
+                    JSON.stringify({
+                        day: today,
+                        word: todaysWord,
+                        round: round,
+                        index: letterIndex + 1,
+                    }),
+                );
+            }
+        }
+    };
 
     const submit = () => {
         const newMarkers = { ...markers };
@@ -161,59 +214,6 @@ export default function App() {
                     index: 0,
                 }),
             );
-        }
-    };
-
-    const keyPress = async (key) => {
-        const pressed = key.toLowerCase();
-        if (pressed === 'enter' && !guesses[round].includes('')) {
-            // Fetch words & validate
-            const isValid = enterWordList.includes(guesses[round].join(''));
-
-            if (isValid) submit();
-            else setIncorrect(round);
-        } else if (pressed === 'backspace') {
-            // Controlleer of de letter niet 0 is
-            if (letterIndex !== 0) {
-                // Verwijder de laatste letter
-                const newGuesses = guesses;
-                newGuesses[round][letterIndex - 1] = '';
-                setGuesses(newGuesses);
-
-                setLetterIndex(letterIndex - 1);
-    
-                saveData(
-                    JSON.stringify(guesses),
-                    JSON.stringify(markers),
-                    JSON.stringify({
-                        day: today,
-                        word: todaysWord,
-                        round: round,
-                        index: letterIndex - 1,
-                    }),
-                );
-            }
-        } else if (pressed !== 'enter') {
-            // Controlleer of er al 5 letters zijn toegevoegd
-            if (letterIndex < 5) {
-                // Voeg een nieuwe letter toe
-                const newGuesses = guesses;
-                newGuesses[round][letterIndex] = key.toLowerCase();
-                setGuesses(newGuesses);
-    
-                setLetterIndex(letterIndex + 1);
-
-                saveData(
-                    JSON.stringify(guesses),
-                    JSON.stringify(markers),
-                    JSON.stringify({
-                        day: today,
-                        word: todaysWord,
-                        round: round,
-                        index: letterIndex + 1,
-                    }),
-                );
-            }
         }
     };
 
