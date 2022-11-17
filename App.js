@@ -89,13 +89,13 @@ export default function App() {
     const keyPress = async (key) => {
         const pressed = key.toLowerCase();
         if (pressed === 'enter' && !guesses[round].includes('')) {
-            // Fetch words & validate
+            // Haal woorden op en valideer
             const isValid = enterWordList.includes(guesses[round].join(''));
 
             if (isValid) submit();
             else setIncorrect(round);
         } else if (pressed === 'backspace') {
-            // Controlleer of de letter niet 0 is
+            // Controlleer of de letter niet plaats 0 heeft
             if (letterIndex !== 0) {
                 // Verwijder de laatste letter
                 const newGuesses = guesses;
@@ -173,18 +173,16 @@ export default function App() {
         }
 
         // Controleer alle letters op de verkeerde plek
-        if (notMarked.length) {
-            notMarked.forEach((i) => {
-                const guessedLetter = guesses[round][i];
-                const position = correctWord.indexOf(guessedLetter);
+        notMarked.forEach((i) => {
+            const guessedLetter = guesses[round][i];
+            const position = correctWord.indexOf(guessedLetter);
 
-                // Controleer of de letter in het woord zit
-                if (correctWord.includes(guessedLetter) && position !== i) {
-                    newMarkers[round][i] = 'yellow';
-                    correctWord[position] = '';
-                } else newMarkers[round][i] = 'grey';
-          });
-        }
+            // Controleer of de letter in het woord zit
+            if (correctWord.includes(guessedLetter) && position !== i) {
+                newMarkers[round][i] = 'yellow';
+                correctWord[position] = '';
+            } else newMarkers[round][i] = 'grey';
+        });
 
         // Als dit de laatste ronde is, laat het eindscherm zien, anders naar de volgende ronde
         if (round === 5) {
